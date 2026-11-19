@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin Petualangan Belajar</title>
+<style>
+:root{--bg:#fdf3dc;--ink:#26204a;--card:#fffdf7;--line:#26204a;--blue:#3b82f6;--org:#f97316;--grn:#16a34a;--sun:#ffc93c;--mute:#6b6590;--soft:#f3ead0;box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1738;--ink:#fff4dc;--card:#2a2456;--line:#fff4dc;--mute:#b9b2e0;--soft:#352e6b}}
+:root[data-theme="dark"]{--bg:#1b1738;--ink:#fff4dc;--card:#2a2456;--line:#fff4dc;--mute:#b9b2e0;--soft:#352e6b}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Trebuchet MS",system-ui,sans-serif;font-size:16px;line-height:1.45}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;max-width:980px;margin:0 auto}
+header b{font-size:19px}
+main{max-width:980px;margin:0 auto;padding:0 16px 110px}
+h1{font-size:clamp(24px,5vw,34px);margin:8px 0}h2{font-size:20px;margin:0 0 8px}h3{font-size:17px;margin:12px 0 6px}
+p{margin:6px 0}.mute{color:var(--mute);font-size:14px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.card{background:var(--card);border:3px solid var(--line);border-radius:18px;padding:16px;margin:14px 0;box-shadow:0 4px 0 var(--line)}
+.go,.back,.sm,.ad{border:3px solid var(--line);border-radius:12px;padding:8px 16px;font-weight:700;background:var(--card)}
+.go{background:var(--sun);color:#26204a;box-shadow:0 3px 0 var(--line)}
+.go:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.go:disabled,.sm:disabled{opacity:.45;cursor:not-allowed}
+.sm{padding:2px 9px;border-width:2px;border-radius:9px}
+.ad{border-style:dashed;width:100%;margin-top:8px;background:transparent}
+.danger{color:#b91c1c}
+input[type=text],input[type=number],input[type=password],select,textarea{width:100%;padding:8px 10px;border:3px solid var(--line);border-radius:10px;background:var(--bg)}
+textarea{resize:vertical}
+input[type=number]{width:90px}
+label{font-weight:700;display:block;margin-bottom:2px}
+label.ck{display:inline-flex;gap:6px;align-items:center;font-weight:400}
+.fld{margin:10px 0}.lg{display:flex;gap:6px;align-items:flex-start;margin-top:4px}.fl{background:var(--soft);border:2px solid var(--line);border-radius:8px;font-size:12px;font-weight:700;padding:6px 7px;margin-top:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.row>div{flex:1;min-width:140px}.row>.nf{flex:0 0 auto;min-width:0}
+.li{display:grid;gap:10px}.it{border:3px solid var(--line);border-radius:14px;padding:10px;background:var(--soft)}
+.it .it{background:var(--card)}
+.ib{display:flex;gap:6px;align-items:center;margin-bottom:6px}.sp{flex:1}
+details{border:2px solid var(--line);border-radius:12px;padding:6px 10px;background:var(--card)}
+summary{cursor:pointer;font-weight:700;padding:4px 0}
+.pill{display:inline-block;border:2px solid var(--line);border-radius:99px;padding:1px 10px;font-size:13px;font-weight:700}
+.pill.on{background:#bbf7d0;color:#14532d}.pill.off{background:var(--soft)}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.tabs button{text-align:left;border:3px solid var(--line);border-radius:14px;padding:10px;background:var(--card)}
+.tabs button small{display:block;color:var(--mute)}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}th,td{border:2px solid var(--line);padding:5px 8px;text-align:left;white-space:nowrap}th{background:var(--soft)}.tw{overflow-x:auto}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:3px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;flex-wrap:wrap;justify-content:center;z-index:5}
+.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 18px;border-radius:99px;font-weight:700;z-index:20;max-width:90vw}
+.probs{background:#fee2e2;color:#7f1d1d;border:3px solid #b91c1c;border-radius:14px;padding:10px 16px;margin:12px 0}.probs ul{margin:4px 0 0;padding-left:20px}
+.top{display:flex;gap:12px;align-items:center;margin:6px 0;flex-wrap:wrap}
+.login{max-width:380px;margin:40px auto;text-align:center}
+:focus-visible{outline:4px solid var(--blue);outline-offset:2px}
+</style></head><body>
+<header><b>🧑‍🏫 Admin Petualangan Belajar</b><span id="who"></span></header>
+<main id="app"></main>
+<script>
+/* Alamat Google Apps Script (Web app, berakhiran /exec) dan nama berkas game siswa. */
+const SYNC='https://script.google.com/macros/s/AKfycbxlOaom3DHLCKEg9h_enfOiVeEi0oBqD9rrojtv7H-Vw1x1CRXlcvO20GWacvDeLaE/exec';
+const PLAYER='player.html';
+
+const A=document.getElementById('app');
+let CODE='',LS=[],L=null,dirty=0,refs=[];
+try{CODE=sessionStorage.getItem('adm_code')||''}catch(e){}
+
+/* ---------- util DOM ---------- */
+const h=(tag,a,...c)=>{const e=document.createElement(tag);for(const k in a||{}){const v=a[k];if(k==='class')e.className=v;else if(k.startsWith('on'))e[k]=v;else if(k==='value')e.value=v;else e.setAttribute(k,v)}c.flat().forEach(x=>x!=null&&e.append(x.nodeType?x:document.createTextNode(x)));return e};
+const btn=(t,fn,dis,cls)=>{const b=h('button',{type:'button',class:cls||'sm'},t);b.onclick=fn;b.disabled=!!dis;return b};
+const touch=()=>{dirty=1;refs.forEach(f=>f())};
+const T0=(en,id)=>({en:en||'',id:id||''});
+const T1=o=>o&&(o.en||o.id)||'';
+const uid=()=>'L'+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36);
+let tt;const toast=(t)=>{document.querySelectorAll('.toast').forEach(x=>x.remove());const e=h('div',{class:'toast'},t);document.body.append(e);clearTimeout(tt);tt=setTimeout(()=>e.remove(),2600)};
+
+const inp=(o,k,a)=>{a=a||{};const num=a.type==='number';const e=h('input',Object.assign({type:'text'},a));e.value=o[k]==null?'':o[k];e.oninput=()=>{o[k]=num?(e.value===''?null:+e.value):e.value;touch()};return e};
+const bt=(label,o,k,a)=>{a=a||{};if(!o[k])o[k]=T0();
+ const f=l=>{const i=a.area?h('textarea',{rows:2}):h('input',{type:'text'});i.value=o[k][l]||'';i.placeholder=l==='en'?'English':'Bahasa Indonesia';i.oninput=()=>{o[k][l]=i.value;touch()};return h('div',{class:'lg'},h('span',{class:'fl'},l.toUpperCase()),i)};
+ return h('div',{class:'fld'},label?h('label',{},label):null,a.hint?h('div',{class:'mute'},a.hint):null,f('en'),f('id'))};
+const sel=(o,k,opts)=>{const s=h('select');opts.forEach(([v,t])=>s.append(h('option',{value:v},t)));s.value=o[k];s.onchange=()=>{o[k]=s.value;touch()};return s};
+const chk=(o,k,label)=>{const c=h('input',{type:'checkbox'});c.checked=!!o[k];c.onchange=()=>{o[k]=c.checked;touch()};return h('label',{class:'ck'},c,label)};
+function listEd(arr,mk,row,addLabel,min){
+ const box=h('div',{class:'li'});
+ const mv=(i,d)=>{const j=i+d;[arr[i],arr[j]]=[arr[j],arr[i]];touch();draw()};
+ const draw=()=>{box.innerHTML='';
+  arr.forEach((it,i)=>{
+   const bar=h('div',{class:'ib'},h('b',{},'#'+(i+1)),h('span',{class:'sp'}),btn('▲',()=>mv(i,-1),i===0),btn('▼',()=>mv(i,1),i===arr.length-1),btn('✕',()=>{arr.splice(i,1);touch();draw()},arr.length<=(min||0),'sm danger'));
+   box.append(h('div',{class:'it'},bar,row(it,i)))});
+  box.append(btn('＋ '+addLabel,()=>{arr.push(mk());touch();draw()},false,'ad'))};
+ draw();return box}
+
+/* ---------- model pelajaran ---------- */
+const MT={
+ guess:{label:'Kenali & Tebak',desc:'Kartu belajar, lalu siswa menebak gambar yang disebut',icon:'🔎'},
+ targets:{label:'Klik target',desc:'Target melayang; siswa klik kiri / kanan / dua kali',icon:'🎈'},
+ mouse_buttons:{label:'Tombol mouse',desc:'Klik tombol kiri/kanan pada gambar mouse',icon:'🖱️'},
+ quiz:{label:'Pilihan ganda',desc:'Pertanyaan dengan beberapa jawaban',icon:'❓'}};
+const ET={
+ pair:{label:'Pasangan (pilih → jelaskan)',desc:'Siswa memilih satu hal, lalu memilih fungsi/keterangan yang tepat'},
+ multi:{label:'Ceklis lalu bagikan',desc:'Siswa mencentang semua yang bisa dilakukan, lalu memilih satu untuk dibagikan'},
+ choose:{label:'Kalimat rumpang',desc:'Satu kalimat dengan satu isian; jawaban benar boleh dikosongkan (refleksi)'}};
+const newMission=t=>{
+ const base={type:t,icon:MT[t].icon,title:T0(),intro:T0(),done:T0('Great job!','Kamu hebat!'),correct:null,bonus:null};
+ if(t==='guess')return Object.assign(base,{learn:true,items:[{name:'',emoji:'',fact:T0()},{name:'',emoji:'',fact:T0()}],intro:T0('Read each name and look at the picture. Then we play a guessing game!','Baca nama dan lihat gambarnya. Lalu kita main tebak!')});
+ if(t==='targets')return Object.assign(base,{count:8,targets:[{emoji:'🎈',click:'left',after:'',label:T0(),win:T0()}],intro:T0('Move the mouse to a balloon. Press the **LEFT** button one time.','Gerakkan mouse ke balon. Tekan tombol **KIRI** satu kali.')});
+ if(t==='quiz')return Object.assign(base,{questions:[newQ()]});
+ return base};
+const newQ=()=>({q:T0(),hint:T0(),options:[{t:T0(),ok:true},{t:T0(),ok:false},{t:T0(),ok:false}]});
+const newStep=t=>{
+ if(t==='pair')return{type:t,template:T0('Today I learned that the {A} is used to {B}.','Hari ini aku belajar bahwa {A} dipakai untuk {B}.'),promptA:T0('Choose one to tell about.','Pilih satu untuk diceritakan.'),promptB:T0('What is the {A} used to do? Choose one.','Untuk apa {A} dipakai? Pilih satu.'),pairs:[{a:T0(),emoji:'',b:T0()},{a:T0(),emoji:'',b:T0()}]};
+ if(t==='multi')return{type:t,template:T0('One thing I can do is {X}.','Satu hal yang bisa aku lakukan adalah {X}.'),promptPick:T0('Tap all the things you can do.','Ketuk semua hal yang bisa kamu lakukan.'),promptShare:T0('Now choose ONE to share with the class.','Sekarang pilih SATU untuk dibagikan ke kelas.'),options:[{emoji:'',t:T0()},{emoji:'',t:T0()}]};
+ return{type:'choose',template:T0('I think the answer is {X}.','Menurutku jawabannya {X}.'),prompt:T0('Choose one.','Pilih satu.'),options:[{emoji:'',t:T0(),ok:true},{emoji:'',t:T0(),ok:false}]}};
+const blank=()=>({v:1,id:uid(),title:'',tab:'',classes:[],published:false,scoring:{correct:1,bonus:2},missions:[],exit:{enabled:false,steps:[]}});
+function sample(){
+ const L=blank();L.title='Petualangan Mouse';L.tab='Pertemuan 1';L.classes=['3 Aster','3 Gardenia','3 Gloxinia','3 Lavender'];
+ const g=newMission('guess');g.icon='🖥️';g.title=T0('Computer Parts','Bagian Komputer');g.items=[
+  {name:'Monitor',emoji:'🖥️',fact:T0('The monitor shows pictures and words. It is like the eyes of the computer!','Monitor menampilkan gambar dan tulisan. Seperti mata komputer!')},
+  {name:'CPU',emoji:'🗄️',fact:T0('The CPU is the brain of the computer. It is where the computer thinks!','CPU adalah otak komputer. Di sinilah komputer berpikir!')},
+  {name:'Keyboard',emoji:'⌨️',fact:T0('The keyboard is used to type letters and numbers.','Keyboard dipakai untuk mengetik huruf dan angka.')},
+  {name:'Mouse',emoji:'🖱️',fact:T0('The mouse moves the pointer on the screen and is used to click.','Mouse menggerakkan panah di layar dan dipakai untuk mengklik.')}];
+ const mb=newMission('mouse_buttons');mb.title=T0('Mouse Buttons','Tombol Mouse');
+ const tg=(icon,ti,click,emoji,count,intro,after)=>{const m=newMission('targets');m.icon=icon;m.title=ti;m.count=count;m.intro=intro;m.targets=[{emoji,click,after:after||'',label:T0(),win:T0()}];return m};
+ const l=tg('🎈',T0('Left Click','Klik Kiri'),'left','🎈',8,T0('Move the mouse to a balloon. Press the **LEFT** button one time.','Gerakkan mouse ke balon. Tekan tombol **KIRI** satu kali.'));l.done=T0('Great job using the left click!','Kamu hebat memakai klik kiri!');
+ const r=tg('⭐',T0('Right Click','Klik Kanan'),'right','⭐',8,T0('Move the mouse to a star. Press the **RIGHT** button one time.','Gerakkan mouse ke bintang. Tekan tombol **KANAN** satu kali.'));r.done=T0('Great job using the right click!','Kamu hebat memakai klik kanan!');
+ const d=tg('🥚',T0('Double Click','Klik Dua Kali'),'double','🥚',6,T0('Move the mouse to an egg. Press the **LEFT** button two times, fast.','Gerakkan mouse ke telur. Tekan tombol **KIRI** dua kali dengan cepat.'),'🐥');d.done=T0('Great job using the double click!','Kamu hebat memakai double click!');d.targets[0].win=T0('It hatched! 🐥','Menetas!');
+ const x=newMission('targets');x.icon='🏁';x.title=T0('Mixed Challenge','Tantangan Campuran');x.count=12;x.intro=T0('Read the label under each picture. Choose the right click!','Baca label di bawah gambar. Pilih klik yang sesuai!');x.done=T0('Challenge complete. You are great!','Tantangan selesai. Kamu jago!');
+ x.targets=[{emoji:'🎈',click:'left',after:'',label:T0(),win:T0()},{emoji:'⭐',click:'right',after:'',label:T0(),win:T0()},{emoji:'🥚',click:'double',after:'🐥',label:T0(),win:T0()}];
+ const q=newMission('quiz');q.icon='💬';q.title=T0('What Did You Notice?','Apa yang Kamu Perhatikan?');q.intro=T0();q.done=T0('You can tell what each click does. Tell your friend!','Kamu bisa menjelaskan fungsi tiap klik. Ceritakan ke temanmu!');
+ const mq=(a,b,c,d2,e,f)=>({q:T0(a,b),hint:T0('Think about what you clicked today.','Coba ingat lagi yang tadi kamu klik.'),options:[{t:T0(c,d2),ok:true},{t:T0(e[0],e[1]),ok:false},{t:T0(f[0],f[1]),ok:false}]});
+ q.questions=[mq('A single left click is used to…','Klik kiri satu kali dipakai untuk…','choose or press something','memilih atau menekan sesuatu',['show a menu of choices','memunculkan menu pilihan'],['turn off the computer','mematikan komputer']),
+  mq('A right click usually…','Klik kanan biasanya…','shows a menu of choices','memunculkan menu pilihan',['types letters','mengetik huruf'],['prints a picture','mencetak gambar']),
+  mq('A double click is usually used to…','Double click biasanya dipakai untuk…','open a file or program','membuka file atau program',['close the screen','menutup layar'],['change the keyboard','mengganti keyboard'])];
+ L.missions=[g,mb,l,r,d,x,q];
+ const p=newStep('pair');p.pairs=[{a:T0('Monitor'),emoji:'🖥️',b:T0('show pictures and words','menampilkan gambar dan tulisan')},{a:T0('CPU'),emoji:'🗄️',b:T0('help the computer think','membantu komputer berpikir')},{a:T0('Keyboard'),emoji:'⌨️',b:T0('type letters and numbers','mengetik huruf dan angka')},{a:T0('Mouse'),emoji:'🖱️',b:T0('move the pointer and click','menggerakkan panah dan mengklik')}];
+ const m=newStep('multi');m.template=T0('One mouse action I can do is {X}.','Satu aksi mouse yang bisa aku lakukan adalah {X}.');m.promptPick=T0('Tap all the mouse actions you can do.','Ketuk semua aksi mouse yang bisa kamu lakukan.');
+ m.options=[{emoji:'👆',t:T0('left click','klik kiri')},{emoji:'👉',t:T0('right click','klik kanan')},{emoji:'✌️',t:T0('double click','klik dua kali')},{emoji:'↔️',t:T0('move the mouse','menggerakkan mouse')}];
+ L.exit={enabled:true,steps:[p,m]};return L}
+
+/* skor */
+const sc=m=>({c:m.correct==null?+L.scoring.correct||0:m.correct,b:m.bonus==null?+L.scoring.bonus||0:m.bonus});
+const cnt=m=>({guess:(m.items||[]).length,targets:+m.count||0,mouse_buttons:2,quiz:(m.questions||[]).length}[m.type]||0);
+const mx=m=>cnt(m)*sc(m).c+sc(m).b;
+const maxAll=()=>L.missions.reduce((t,m)=>t+mx(m),0);
+
+function clean(){L.title=(L.title||'').trim();L.tab=(L.tab||'').trim();L.scoring.correct=+L.scoring.correct||0;L.scoring.bonus=+L.scoring.bonus||0;L.missions.forEach(m=>{if(m.type==='targets')m.count=Math.max(0,Math.round(+m.count||0))})}
+function validate(){
+ const p=[];
+ if(!L.title)p.push('Judul pelajaran belum diisi.');
+ if(!L.tab||/[\[\]:*?\/\\]/.test(L.tab)||L.tab[0]==='_'||L.tab.length>90)p.push('Nama tab Sheet kosong atau tidak valid (jangan pakai [ ] : * ? / \\ dan jangan diawali _).');
+ if(!L.missions.length)p.push('Tambahkan minimal satu misi.');
+ L.missions.forEach((m,i)=>{const n='Misi '+(i+1)+': ';
+  if(!T1(m.title))p.push(n+'judul masih kosong.');
+  if(m.type==='guess'&&(m.items.length<2||m.items.some(x=>!x.name||!x.emoji)))p.push(n+'butuh minimal 2 benda, masing-masing dengan nama dan gambar.');
+  if(m.type==='targets'){if(!m.targets.length||m.targets.some(t=>!t.emoji))p.push(n+'setiap target harus punya gambar.');if(!(m.count>=1))p.push(n+'jumlah target minimal 1.')}
+  if(m.type==='quiz'){if(!m.questions.length)p.push(n+'belum ada pertanyaan.');m.questions.forEach((q,j)=>{const o=q.options.filter(x=>T1(x.t));if(!T1(q.q)||o.length<2||!o.some(x=>x.ok))p.push(n+'pertanyaan '+(j+1)+' butuh teks, minimal 2 jawaban, dan 1 jawaban benar.')})}});
+ if(L.exit.enabled){if(!L.exit.steps.length)p.push('Exit ticket aktif tetapi belum punya langkah.');
+  L.exit.steps.forEach((s,j)=>{const n='Exit ticket '+(j+1)+': ';
+   if(!T1(s.template))p.push(n+'kalimat belum diisi.');
+   if(s.type==='pair'&&(s.pairs.length<2||s.pairs.some(x=>!T1(x.a)||!T1(x.b))))p.push(n+'butuh minimal 2 pasangan yang terisi.');
+   if(s.type==='multi'&&s.options.filter(x=>T1(x.t)).length<2)p.push(n+'butuh minimal 2 pilihan.');
+   if(s.type==='choose'&&s.options.filter(x=>T1(x.t)).length<2)p.push(n+'butuh minimal 2 pilihan.')})}
+ return p}
+
+/* ---------- API ---------- */
+async function api(action,data){
+ const r=await fetch(SYNC,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action,code:CODE},data||{}))});
+ const j=await r.json();if(!j.ok)throw new Error(j.error||'gagal');return j}
+const link=l=>new URL(PLAYER+'?l='+encodeURIComponent(l.id),location.href).href;
+const copy=async t=>{try{await navigator.clipboard.writeText(t);toast('Tautan disalin')}catch(e){prompt('Salin tautan ini:',t)}};
+window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+
+/* ---------- layar: masuk ---------- */
+function login(msg){
+ A.innerHTML='';
+ const i=h('input',{type:'password',autocomplete:'off',placeholder:'Kode admin'});
+ const go=async()=>{CODE=i.value;e.textContent='Memeriksa…';try{await load();try{sessionStorage.setItem('adm_code',CODE)}catch(x){}list()}catch(x){CODE='';e.textContent=x.message==='unauthorized'?'Kode salah.':'Tidak bisa terhubung: '+x.message}};
+ const e=h('p',{class:'danger'},msg||'');
+ i.onkeydown=ev=>{if(ev.key==='Enter')go()};
+ A.append(h('div',{class:'card login'},h('div',{style:'font-size:56px'},'🔐'),h('h2',{},'Masuk guru'),h('p',{class:'mute'},'Kode ada di Script properties (ADMIN_CODE) pada Apps Script.'),i,e,btn('Masuk',go,false,'go')));i.focus()}
+async function load(){const j=await api('adminList');LS=j.lessons||[]}
+
+/* ---------- layar: daftar ---------- */
+function list(){
+ dirty=0;L=null;A.innerHTML='';
+ A.append(h('h1',{},'Pelajaran saya'));
+ const mk=(t,fn)=>{const b=btn(t,fn,false,'go');b.style.marginRight='8px';return b};
+ A.append(h('div',{class:'top'},mk('＋ Pelajaran kosong',()=>{L=blank();editor();dirty=1}),mk('＋ Mulai dari contoh “Petualangan Mouse”',()=>{L=sample();editor();dirty=1}),btn('Keluar',()=>{CODE='';try{sessionStorage.removeItem('adm_code')}catch(e){}login()},false,'back')));
+ if(!LS.length)A.append(h('div',{class:'card'},h('p',{},'Belum ada pelajaran. Mulailah dari contoh agar kamu melihat bentuknya, lalu ubah sesukamu.')));
+ LS.slice().sort((a,b)=>String(b.updated).localeCompare(String(a.updated))).forEach(x=>{
+  const l=x.lesson;L=l;const mxs=l.missions?maxAll():0;
+  const c=h('div',{class:'card'},
+   h('div',{class:'top'},h('h2',{style:'margin:0'},x.title||'(tanpa judul)'),h('span',{class:'pill '+(x.published?'on':'off')},x.published?'Terbit':'Draf')),
+   h('p',{class:'mute'},(l.missions||[]).length+' misi · maks ⭐ '+mxs+' · tab Sheet: '+(l.tab||'-')),
+   h('div',{class:'top'},btn('✏️ Edit',()=>{L=JSON.parse(JSON.stringify(l));editor()}),btn('👥 Hasil',()=>results(l)),btn('📄 Salin',()=>{L=JSON.parse(JSON.stringify(l));L.id=uid();L.title+=' (salinan)';L.published=false;editor();dirty=1}),
+    x.published?btn('🔗 Tautan siswa',()=>copy(link(l))):null,
+    btn('🗑 Hapus',async()=>{if(!confirm('Hapus pelajaran "'+x.title+'"? Data hasil siswa di Sheet tidak ikut terhapus.'))return;try{await api('delete',{id:x.id});await load();list();toast('Dihapus')}catch(e){toast('Gagal: '+e.message)}},false,'sm danger')));
+  A.append(c)});
+ L=null}
+
+/* ---------- layar: editor ---------- */
+function editor(){
+ refs=[];A.innerHTML='';window.scrollTo(0,0);
+ const probs=h('div');
+ const status=h('span',{class:'pill'});
+ const setSt=()=>{status.className='pill '+(L.published?'on':'off');status.textContent=L.published?'Terbit':'Draf'};setSt();
+ A.append(h('div',{class:'top'},btn('⬅ Daftar',()=>{if(!dirty||confirm('Ada perubahan yang belum disimpan. Tinggalkan?')){dirty=0;list()}},false,'back'),h('h1',{style:'margin:0'},'Rancang pelajaran'),status),probs);
+
+ /* 1. info */
+ const ta=h('textarea',{rows:4,placeholder:'3 Aster\n3 Gardenia'});ta.value=L.classes.join('\n');ta.oninput=()=>{L.classes=ta.value.split('\n').map(s=>s.trim()).filter(Boolean);touch()};
+ A.append(h('section',{class:'card'},h('h2',{},'1. Info pelajaran'),
+  h('div',{class:'fld'},h('label',{},'Judul'),inp(L,'title',{placeholder:'mis. Petualangan Mouse'})),
+  h('div',{class:'fld'},h('label',{},'Nama tab di Google Sheet'),h('div',{class:'mute'},'Hasil siswa untuk pelajaran ini masuk ke tab ini (dibuat otomatis). Beda pelajaran, beda tab.'),inp(L,'tab',{placeholder:'mis. Pertemuan 1'})),
+  h('div',{class:'fld'},h('label',{},'Daftar kelas (satu per baris)'),h('div',{class:'mute'},'Siswa memilih kelas dari daftar ini. Kosongkan bila tidak perlu.'),ta)));
+
+ /* 2. skor */
+ const sumBody=h('tbody'),totEl=h('b');
+ const drawSum=()=>{sumBody.innerHTML='';L.missions.forEach((m,i)=>sumBody.append(h('tr',{},h('td',{},(i+1)+'. '+(T1(m.title)||'(tanpa judul)')),h('td',{},String(cnt(m))),h('td',{},String(sc(m).c)),h('td',{},String(sc(m).b)),h('td',{},'⭐ '+mx(m)))));totEl.textContent='⭐ '+maxAll()};
+ refs.push(drawSum);
+ A.append(h('section',{class:'card'},h('h2',{},'2. Aturan penilaian'),
+  h('p',{class:'mute'},'Siswa mendapat bintang untuk setiap jawaban/target yang benar, ditambah bonus saat misi selesai. Jumlah klik yang salah dicatat terpisah (tidak mengurangi bintang). Setiap misi bisa memakai nilai sendiri di bagian “Penilaian misi ini”.'),
+  h('div',{class:'row'},h('div',{class:'nf'},h('label',{},'Bintang per benar'),inp(L.scoring,'correct',{type:'number',min:0})),h('div',{class:'nf'},h('label',{},'Bonus selesai misi'),inp(L.scoring,'bonus',{type:'number',min:0}))),
+  h('h3',{},'Ringkasan skor maksimum'),h('div',{class:'tw'},h('table',{},h('thead',{},h('tr',{},h('th',{},'Misi'),h('th',{},'Jumlah benar'),h('th',{},'⭐/benar'),h('th',{},'Bonus'),h('th',{},'Maks'))),sumBody)),
+  h('p',{},'Total maksimum: ',totEl,'  (exit ticket tidak diberi bintang)')));
+
+ /* 3. misi */
+ const mrow=(m,i)=>{
+  const sumEl=h('span');refs.push(()=>{sumEl.textContent=(m.icon||'⭐')+' '+(T1(m.title)||'(tanpa judul)')+' · '+MT[m.type].label+' · ⭐ '+mx(m)});
+  const d=h('details',{},h('summary',{},sumEl));if(!T1(m.title))d.open=true;
+  d.append(h('div',{class:'row'},h('div',{class:'nf'},h('label',{},'Ikon'),(()=>{const e=inp(m,'icon',{maxlength:4});e.style.width='80px';return e})())),
+   bt('Judul misi',m,'title'),bt('Petunjuk untuk siswa',m,'intro',{area:1,hint:'Tulis **kata** agar tercetak tebal.'}),bt('Pesan saat misi selesai',m,'done'));
+  if(m.type==='guess'){
+   d.append(h('div',{class:'fld'},chk(m,'learn',' Tampilkan dulu kartu belajar sebelum menebak')),h('h3',{},'Benda yang dikenalkan'),h('p',{class:'mute'},'Siswa ditanya satu per satu: “Mana yang …?”. Gambar bisa emoji atau alamat gambar (https://…).'),
+    listEd(m.items,()=>({name:'',emoji:'',fact:T0()}),it=>h('div',{},h('div',{class:'row'},h('div',{},h('label',{},'Nama'),inp(it,'name',{placeholder:'Monitor'})),h('div',{},h('label',{},'Gambar (emoji / URL)'),inp(it,'emoji',{placeholder:'🖥️'}))),bt('Penjelasan singkat',it,'fact')),'Tambah benda',2))}
+  if(m.type==='targets'){
+   d.append(h('div',{class:'row'},h('div',{class:'nf'},h('label',{},'Jumlah target yang harus diselesaikan'),inp(m,'count',{type:'number',min:1}))),h('h3',{},'Jenis target'),h('p',{class:'mute'},'Setiap kemunculan dipilih acak dari daftar ini. Bila ada lebih dari satu jenis klik, label klik otomatis muncul di bawah target.'),
+    listEd(m.targets,()=>({emoji:'🎈',click:'left',after:'',label:T0(),win:T0()}),t=>h('div',{},h('div',{class:'row'},h('div',{},h('label',{},'Gambar (emoji / URL)'),inp(t,'emoji')),h('div',{},h('label',{},'Cara mengklik'),sel(t,'click',[['left','Klik kiri'],['right','Klik kanan'],['double','Klik dua kali']])),h('div',{},h('label',{},'Gambar setelah berhasil (opsional)'),inp(t,'after',{placeholder:'🐥'}))),bt('Label khusus di bawah target (opsional)',t,'label'),bt('Pesan saat berhasil (opsional)',t,'win')),'Tambah jenis target',1))}
+  if(m.type==='mouse_buttons')d.append(h('p',{class:'mute'},'Misi ini tidak perlu diisi lagi: siswa diminta mengklik tombol KIRI dan KANAN pada gambar mouse (2 pertanyaan, urutan acak).'));
+  if(m.type==='quiz')d.append(h('h3',{},'Pertanyaan'),listEd(m.questions,newQ,q=>h('div',{},bt('Pertanyaan',q,'q'),h('label',{},'Pilihan jawaban (centang yang benar)'),listEd(q.options,()=>({t:T0(),ok:false}),o=>h('div',{},chk(o,'ok',' Jawaban benar'),bt('',o,'t')),'Tambah pilihan',2),bt('Petunjuk bila salah (opsional)',q,'hint')),'Tambah pertanyaan',1));
+  d.append(h('h3',{},'Penilaian misi ini'),h('p',{class:'mute'},'Kosongkan untuk memakai aturan umum.'),h('div',{class:'row'},h('div',{class:'nf'},h('label',{},'Bintang per benar'),inp(m,'correct',{type:'number',min:0,placeholder:String(L.scoring.correct)})),h('div',{class:'nf'},h('label',{},'Bonus selesai'),inp(m,'bonus',{type:'number',min:0,placeholder:String(L.scoring.bonus)}))));
+  return d};
+ const mWrap=h('div');
+ const addBox=h('div',{class:'tabs',style:'margin-top:10px'});
+ Object.keys(MT).forEach(t=>addBox.append(h('button',{type:'button',onclick:()=>{L.missions.push(newMission(t));touch();mDraw()}},h('b',{},MT[t].icon+' + '+MT[t].label),h('small',{},MT[t].desc))));
+ const mDraw=()=>{mWrap.innerHTML='';mWrap.append(listEd(L.missions,()=>null,mrow,'',0));
+  /* listEd menambah tombol tambah sendiri; ganti dengan pilihan template */
+  const ad=mWrap.querySelector(':scope > .li > .ad');if(ad)ad.remove();refs.forEach(f=>f())};
+ /* listEd.draw dipanggil ulang saat hapus/pindah; pasang pengamat agar tombol tambah bawaan tetap tersembunyi */
+ const hideAd=()=>{const ad=mWrap.querySelector(':scope > .li > .ad');if(ad)ad.style.display='none'};
+ new MutationObserver(hideAd).observe(mWrap,{childList:true,subtree:true});
+ A.append(h('section',{class:'card'},h('h2',{},'3. Misi'),h('p',{class:'mute'},'Misi dimainkan siswa sesuai urutan di sini. Klik sebuah misi untuk membuka dan mengubahnya.'),mWrap,h('h3',{},'Tambah misi baru dari template'),addBox));
+ mDraw();
+
+ /* 4. exit ticket */
+ const exBody=h('div');
+ const exDraw=()=>{exBody.innerHTML='';if(!L.exit.enabled)return;
+  exBody.append(h('p',{class:'mute'},'Di kalimat, tulis {A}, {B} atau {X} sebagai tempat isian (lihat petunjuk di tiap jenis). Exit ticket tidak diberi bintang; jawabannya dikirim ke Sheet.'),
+   listEd(L.exit.steps,()=>null,(s)=>{
+    const d=h('div',{},h('b',{},ET[s.type].label),h('p',{class:'mute'},ET[s.type].desc));
+    if(s.type==='pair')d.append(bt('Kalimat (pakai {A} dan {B})',s,'template'),bt('Perintah langkah 1',s,'promptA'),bt('Perintah langkah 2 (boleh pakai {A})',s,'promptB'),h('h3',{},'Pasangan'),listEd(s.pairs,()=>({a:T0(),emoji:'',b:T0()}),p=>h('div',{},h('div',{class:'row'},h('div',{},h('label',{},'Gambar (emoji / URL)'),inp(p,'emoji'))),bt('Yang dipilih di langkah 1 ({A})',p,'a'),bt('Keterangan yang tepat ({B})',p,'b')),'Tambah pasangan',2));
+    if(s.type==='multi')d.append(bt('Kalimat (pakai {X})',s,'template'),bt('Perintah mencentang',s,'promptPick'),bt('Perintah memilih satu',s,'promptShare'),h('h3',{},'Pilihan'),listEd(s.options,()=>({emoji:'',t:T0()}),o=>h('div',{},h('div',{class:'row'},h('div',{},h('label',{},'Gambar (emoji / URL)'),inp(o,'emoji'))),bt('Teks pilihan ({X})',o,'t')),'Tambah pilihan',2));
+    if(s.type==='choose')d.append(bt('Kalimat (pakai {X})',s,'template'),bt('Perintah',s,'prompt'),h('h3',{},'Pilihan (centang yang benar; bila tidak ada, semua diterima)'),listEd(s.options,()=>({emoji:'',t:T0(),ok:false}),o=>h('div',{},chk(o,'ok',' Jawaban benar'),h('div',{class:'row'},h('div',{},h('label',{},'Gambar (emoji / URL, opsional)'),inp(o,'emoji'))),bt('Teks pilihan ({X})',o,'t')),'Tambah pilihan',2));
+    return d},'',0),
+   h('h3',{},'Tambah langkah'),(()=>{const b=h('div',{class:'tabs'});Object.keys(ET).forEach(t=>b.append(h('button',{type:'button',onclick:()=>{L.exit.steps.push(newStep(t));touch();exDraw()}},h('b',{},'＋ '+ET[t].label),h('small',{},ET[t].desc))));return b})());
+  const ad=exBody.querySelector(':scope > .li > .ad');if(ad)ad.style.display='none';
+  new MutationObserver(()=>{const a=exBody.querySelector(':scope > .li > .ad');if(a)a.style.display='none'}).observe(exBody,{childList:true,subtree:true})};
+ const exChk=h('input',{type:'checkbox'});exChk.checked=!!L.exit.enabled;exChk.onchange=()=>{L.exit.enabled=exChk.checked;touch();exDraw()};
+ A.append(h('section',{class:'card'},h('h2',{},'4. Exit ticket & refleksi'),h('label',{class:'ck'},exChk,' Aktifkan exit ticket'),exBody));exDraw();
+
+ refs.forEach(f=>f());
+
+ /* bilah aksi */
+ const save=async(pub)=>{
+  clean();const will=pub==null?L.published:pub;
+  if(will){const p=validate();probs.innerHTML='';if(p.length){probs.append(h('div',{class:'probs'},h('b',{},'Belum bisa diterbitkan:'),h('ul',{},p.map(x=>h('li',{},x)))));window.scrollTo({top:0,behavior:'smooth'});return}}
+  else{probs.innerHTML='';if(!L.title){toast('Isi judul dulu');return}}
+  const prev=L.published;L.published=will;
+  try{await api('save',{lesson:L});dirty=0;setSt();await load();toast(will?(prev?'Tersimpan (terbit)':'Terbit! Siswa bisa memainkannya'):'Tersimpan sebagai draf');pubBtn.textContent=L.published?'⏸ Tarik jadi draf':'🚀 Simpan & terbitkan';linkBtn.style.display=L.published?'':'none'}
+  catch(e){L.published=prev;toast('Gagal menyimpan: '+e.message)}};
+ const pubBtn=btn(L.published?'⏸ Tarik jadi draf':'🚀 Simpan & terbitkan',()=>save(!L.published),false,'go');
+ const linkBtn=btn('🔗 Salin tautan siswa',()=>copy(link(L)),false,'back');linkBtn.style.display=L.published?'':'none';
+ const prev=btn('👁 Pratinjau',()=>{clean();try{localStorage.setItem('pm_preview',JSON.stringify(L))}catch(e){}window.open(PLAYER+'?preview=1','_blank')},false,'back');
+ A.append(h('div',{class:'bar'},prev,btn('💾 Simpan',()=>save(null),false,'back'),pubBtn,linkBtn))}
+
+/* ---------- layar: hasil ---------- */
+async function results(l){
+ A.innerHTML='';A.append(h('div',{class:'top'},btn('⬅ Daftar',list,false,'back'),h('h1',{style:'margin:0'},'Hasil: '+l.title)),h('p',{class:'mute'},'Memuat dari Google Sheet…'));
+ let rows;try{rows=(await api('results',{tab:l.tab})).rows}catch(e){A.append(h('div',{class:'probs'},'Gagal memuat: '+e.message));return}
+ A.lastChild.remove();
+ if(rows.length<2){A.append(h('div',{class:'card'},'Belum ada hasil untuk pelajaran ini.'));return}
+ const head=rows[0],body=rows.slice(1),ki=head.indexOf('Kelas');
+ const kelas=[...new Set(body.map(r=>r[ki]).filter(Boolean))].sort();
+ const out=h('div',{class:'tw card'}),fs=h('select',{},h('option',{value:''},'Semua kelas'),kelas.map(k=>h('option',{value:k},k)));
+ const draw=()=>{const f=fs.value,data=body.filter(r=>!f||r[ki]===f);out.innerHTML='';
+  const avgCols=head.map(c=>/Bintang|Salah|Misi Selesai/.test(c)&&!/Tiket/.test(c));
+  const avg=head.map((c,j)=>{if(!avgCols[j])return j===1?'Rata-rata':'';const v=data.map(r=>r[j]).filter(x=>x!==''&&!isNaN(x)).map(Number);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):''});
+  out.append(h('table',{},h('thead',{},h('tr',{},head.slice(1).map(c=>h('th',{},String(c))))),h('tbody',{},data.map(r=>h('tr',{},r.slice(1).map(c=>h('td',{},String(c))))),h('tr',{style:'font-weight:700'},avg.slice(1).map(c=>h('td',{},c))))));
+  return data};
+ fs.onchange=draw;
+ const dl=()=>{const data=draw();const q=v=>'"'+String(v).replace(/"/g,'""')+'"';const csv='\uFEFF'+[head].concat(data).map(r=>r.slice(1).map(q).join(',')).join('\r\n');const a=h('a',{href:URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),download:'hasil-'+l.tab+'.csv'});document.body.append(a);a.click();a.remove()};
+ A.append(h('div',{class:'top'},h('label',{style:'margin:0'},'Kelas: '),fs,btn('⬇ Unduh CSV',dl,false,'go')),out);draw()}
+
+/* ---------- mulai ---------- */
+(async()=>{
+ if(!SYNC){A.append(h('div',{class:'probs'},'Alamat Apps Script (SYNC) belum diisi di admin.html.'));return}
+ if(CODE){try{await load();return list()}catch(e){CODE=''}}
+ login()})();
+</script></body></html>

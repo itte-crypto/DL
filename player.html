@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Petualangan Belajar</title>
+<style>
+:root{--bg:#fdf3dc;--ink:#26204a;--card:#fffdf7;--line:#26204a;--blue:#3b82f6;--org:#f97316;--grn:#16a34a;--sun:#ffc93c;--mute:#6b6590;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1738;--ink:#fff4dc;--card:#2a2456;--line:#fff4dc;--mute:#b9b2e0}}
+:root[data-theme="dark"]{--bg:#1b1738;--ink:#fff4dc;--card:#2a2456;--line:#fff4dc;--mute:#b9b2e0}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Comic Sans MS",system-ui,sans-serif;font-size:18px}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;max-width:900px;margin:0 auto}
+header b{font-size:20px}
+#sc{background:var(--sun);color:#26204a;border-radius:99px;padding:6px 16px;font-weight:700;border:3px solid var(--line)}
+main{max-width:900px;margin:0 auto;padding:0 18px 40px}
+h1{font-size:clamp(28px,6vw,44px);margin:8px 0}
+h2{font-size:clamp(22px,4.5vw,30px);margin:10px 0}
+.sub,.intro{color:var(--mute);margin:4px 0 14px}
+button{font:inherit;color:inherit;cursor:pointer}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.mb{position:relative;text-align:left;background:var(--card);border:3px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 5px 0 var(--line);display:grid;gap:2px}
+.mb>span{font-size:38px}.mb small{font-size:15px;color:var(--mute)}.mb em{position:absolute;right:12px;top:10px;font-style:normal;font-size:26px}
+.mb:hover{transform:translateY(-2px)}.mb:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+.mb.wide{width:100%;margin-top:14px}
+.top{display:flex;gap:12px;align-items:center;margin-bottom:6px}
+.back{background:var(--card);border:3px solid var(--line);border-radius:12px;padding:6px 12px}
+.top span{font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
+.pc{position:relative;background:var(--card);border:3px solid var(--line);border-radius:18px;padding:10px;box-shadow:0 5px 0 var(--line);display:grid;gap:4px;justify-items:center;align-content:center}
+.pc:hover{transform:translateY(-2px)}
+.pc.ok{background:#bbf7d0;color:#14532d}
+.pc.sel{background:#bbf7d0;color:#14532d}.pc.sel::after{content:"✓";position:absolute;top:4px;right:10px;font-size:28px;color:#16a34a}
+.pe{font-size:64px;line-height:1.1}.pi{width:100%;max-width:110px;aspect-ratio:1;object-fit:contain}
+.msg{min-height:30px;font-weight:700;margin:10px 0}
+.msg.good{color:var(--grn)}.msg.bad{color:var(--org)}
+.stage{position:relative;height:340px;background:var(--card);border:3px solid var(--line);border-radius:18px;overflow:hidden;user-select:none;-webkit-user-select:none;cursor:default}
+.tg{position:absolute;width:90px;text-align:center;font-size:58px;line-height:1.1;cursor:pointer;animation:fl 2s ease-in-out infinite}
+.tg .pi{max-width:70px}
+.tg i{display:block;font-style:normal;font-size:14px;font-weight:700;color:#fff;border-radius:99px;padding:2px 8px;margin-top:2px}
+.tg.pop{animation:pop .45s forwards;pointer-events:none}
+.tg.wig{animation:wig .35s}
+@keyframes fl{50%{transform:translateY(-8px)}}
+@keyframes pop{40%{transform:scale(1.5) rotate(10deg)}100%{transform:scale(0);opacity:0}}
+@keyframes wig{25%{transform:rotate(-14deg)}75%{transform:rotate(14deg)}}
+.shake{animation:wig .35s}
+.hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-weight:700}
+.hud svg{width:56px}
+.bar{height:14px;background:var(--card);border:3px solid var(--line);border-radius:99px;width:min(220px,50vw);overflow:hidden}
+.bar div{height:100%;background:var(--grn);width:0;transition:width .3s}
+.card{background:var(--card);border:3px solid var(--line);border-radius:22px;padding:22px;text-align:center;box-shadow:0 6px 0 var(--line)}
+.big{font-size:72px}
+.go{background:var(--sun);color:#26204a;border:3px solid var(--line);border-radius:14px;padding:10px 22px;font-weight:700;box-shadow:0 4px 0 var(--line);margin-top:10px}
+.go:disabled{opacity:.5;cursor:not-allowed}
+.learn{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:10px}
+.learn .pc{cursor:default;text-align:center}.learn p{margin:0;font-size:15px}
+.bigmouse{width:min(260px,70vw);display:block;margin:10px auto}
+.bigmouse path{cursor:pointer;transition:fill .15s}
+.opts{display:grid;gap:10px;margin-top:10px}
+.opts button{background:var(--card);border:3px solid var(--line);border-radius:14px;padding:12px;text-align:left}
+.opts button.ok{background:#bbf7d0;color:#14532d}
+.opts button.dim{opacity:.4;text-decoration:line-through;cursor:not-allowed}.opts.lk{pointer-events:none}.opts.lk button:not(.dim){opacity:.6}
+.f{display:grid;gap:12px;max-width:340px;margin:14px auto;text-align:left}
+.f input,.f select{display:block;width:100%;font:inherit;padding:10px 12px;border:3px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);margin-top:4px}
+.en{display:block}.id{display:block;font-size:.72em;font-weight:400;color:var(--mute);margin-top:2px}
+body.noid .id{display:none}.tg i .id{color:#fff;font-size:11px;margin:0}
+.blank{display:inline-block;min-width:90px;border-bottom:4px solid var(--blue);text-align:center;color:var(--blue);font-weight:700;padding:0 6px}.blank.f{border-bottom-color:var(--grn);color:var(--grn)}
+.sent{font-size:clamp(20px,4.2vw,30px);line-height:1.6;margin:10px 0}.sent .id{line-height:1.5}
+#lg{padding:4px 10px;margin-right:8px}
+.pv{background:#fde047;color:#26204a;text-align:center;font-weight:700;padding:4px}
+.lst{display:grid;gap:12px;max-width:420px;margin:14px auto}
+:focus-visible{outline:4px solid var(--blue);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div id="pv" class="pv" hidden>Pratinjau guru — hasil tidak dikirim / Preview — results are not sent</div>
+<header><b id="ttl">🖱️ Petualangan Belajar</b><span><button id="lg" class="back" aria-pressed="true" title="Bahasa Indonesia">ID ✓</button><span id="sc">⭐ 0</span></span></header>
+<main id="app"></main>
+<script>
+/* Alamat Google Apps Script (Web app, berakhiran /exec). */
+const SYNC='https://script.google.com/macros/s/AKfycbxlOaom3DHLCKEg9h_enfOiVeEi0oBqD9rrojtv7H-Vw1x1CRXlcvO20GWacvDeLaE/exec';
+
+const A=document.getElementById('app'),SC=document.getElementById('sc'),QS=new URLSearchParams(location.search);
+let L=null,preview=false,stars=0,done={},ms={},cur=0,me=null,et=null,MAX=0;
+const $=h=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstChild};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');           /* **tebal** */
+const bi=(en,id)=>`<span class="en">${en}</span>${id?`<span class="id">${id}</span>`:''}`;
+const tx=o=>o?(o.en||o.id||''):'';
+const T=o=>o?bi(fmt(o.en||o.id||''),o.en&&o.id?fmt(o.id):''):'';
+const pic=s=>/^https?:\/\//.test(s||'')?`<img class="pi" src="${esc(s)}" alt="">`:`<span class="pe">${esc(s||'❓')}</span>`;
+const rec=()=>(ms[cur]=ms[cur]||{s:0,x:0});
+const recalc=()=>{stars=0;for(const k in ms)stars+=ms[k].s;SC.textContent='⭐ '+stars};
+const add=n=>{rec().s+=(n==null?1:n);recalc()};
+function snd(f,d){try{const c=snd.c||(snd.c=new(window.AudioContext||window.webkitAudioContext)());const o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=f;g.gain.value=.12;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+(d||.12))}catch(e){}}
+const ok=()=>{snd(660);setTimeout(()=>snd(880),90)},no=()=>{rec().x++;snd(180,.2)};
+const shuffle=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(p=>p[1]);
+const msg=(en,id,g)=>{const m=A.querySelector('#msg');if(m){m.innerHTML=bi(en,id);m.className='msg '+(g?'good':'bad')}};
+const shake=el=>{el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')};
+const stamp=()=>{const d=new Date(),z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())+' '+z(d.getHours())+':'+z(d.getMinutes())};
+const goBack=()=>me?home():start();
+const hdr=t=>`<div class="top"><button class="back" onclick="goBack()">⬅ Menu</button><span>${t}</span></div>`;
+const setLang=on=>{document.body.classList.toggle('noid',!on);const b=document.getElementById('lg');b.textContent=on?'ID ✓':'ID ✕';b.setAttribute('aria-pressed',on)};
+document.getElementById('lg').onclick=()=>setLang(document.body.classList.contains('noid'));
+
+/* ---- penilaian dinamis (aturan dari pelajaran) ---- */
+const sc=m=>({c:m.correct==null?L.scoring.correct:m.correct,b:m.bonus==null?L.scoring.bonus:m.bonus});
+const cnt=m=>({guess:(m.items||[]).filter(x=>x.name).length,targets:m.count||0,mouse_buttons:2,quiz:(m.questions||[]).length}[m.type]||0);
+const maxOf=m=>cnt(m)*sc(m).c+sc(m).b;
+const mt=i=>'Mission '+(i+1)+' · '+esc(tx(L.missions[i].title));
+const exSteps=()=>(L.exit&&L.exit.enabled&&L.exit.steps)||[];
+
+/* ---- kolom Google Sheet ---- */
+const HD=()=>['Nama','Kelas'].concat(...L.missions.map((m,i)=>{const n='M'+(i+1)+' '+tx(m.title);return[n+' Bintang',n+' Salah']}),['Misi Selesai','Total Bintang','Maks'],...exSteps().map((_,j)=>['Tiket '+(j+1)+' Kalimat','Tiket '+(j+1)+' Semua Pilihan','Tiket '+(j+1)+' Salah','Tiket '+(j+1)+' Jawaban Ditunjukkan']),['Waktu']);
+const rowOf=r=>[r.nama,r.kelas].concat(...L.missions.map((_,i)=>{const m=(r.m||[])[i];return m&&(m.d||m.s||m.x)?[m.s,m.x]:['','']}),[r.misi||0,r.bintang,MAX],...exSteps().map((_,j)=>{const s=((r.e&&r.e.steps)||[])[j];return s?[s.s||'',s.all||'',s.x||0,s.h?'Ya':'']:['','','','']}),[r.waktu]);
+
+/* antrean kirim (dicoba ulang otomatis) */
+const QK='pm_queue';let qmem={},sending=0;
+const qload=()=>{try{return JSON.parse(localStorage.getItem(QK)||'{}')}catch(e){return qmem}};
+const qsave=q=>{qmem=q;try{localStorage.setItem(QK,JSON.stringify(q))}catch(e){}};
+async function flush(){
+ if(!SYNC||sending||preview)return;sending=1;
+ try{const q=qload();
+  for(const id of Object.keys(q)){
+   await fetch(SYNC,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(q[id])});
+   const q2=qload();if(JSON.stringify(q2[id])===JSON.stringify(q[id]))delete q2[id];qsave(q2)}
+ }catch(e){}
+ sending=0}
+function save(){
+ if(!me||preview)return;
+ const r={id:me.id,nama:me.nama,kelas:me.kelas||'',bintang:stars,misi:Object.keys(done).length,m:L.missions.map((_,i)=>({d:done[i]?1:0,s:(ms[i]||{}).s||0,x:(ms[i]||{}).x||0})),e:et,waktu:stamp()};
+ const q=qload();q[r.id]={tab:L.tab,head:['ID'].concat(HD()),row:[r.id].concat(rowOf(r))};qsave(q);flush()}
+setInterval(flush,30000);window.addEventListener('online',flush);
+
+/* ---- memuat pelajaran ---- */
+function errCard(t,fn){A.innerHTML=`<div class="card"><div class="big">😕</div><h2>${t}</h2><button class="go" id="rt">Coba lagi</button></div>`;A.querySelector('#rt').onclick=fn}
+async function getJSON(u){const r=await fetch(u);return r.json()}
+async function boot(){
+ if(QS.get('preview')){try{L=JSON.parse(localStorage.getItem('pm_preview'))}catch(e){}
+  if(L){preview=true;document.getElementById('pv').hidden=false;return begin()}}
+ const id=QS.get('l');
+ if(id)return loadLesson(id);
+ A.innerHTML='<div class="card"><div class="big">⏳</div><h2>Memuat…</h2></div>';
+ try{const j=await getJSON(SYNC+'?action=list');if(!j.ok)throw 0;const ls=j.lessons||[];
+  if(!ls.length)return errCard('Belum ada pelajaran yang diterbitkan.',boot);
+  if(ls.length===1)return loadLesson(ls[0].id);
+  A.innerHTML=`<div class="card"><div class="big">📚</div><h2>${bi('Choose a lesson','Pilih pelajaran')}</h2><div class="lst"></div></div>`;
+  ls.forEach(x=>{const b=$(`<button class="mb"><b>${esc(x.title)}</b></button>`);b.onclick=()=>loadLesson(x.id);A.querySelector('.lst').append(b)})
+ }catch(e){errCard('Tidak bisa terhubung. Periksa internet.',boot)}}
+async function loadLesson(id){
+ A.innerHTML='<div class="card"><div class="big">⏳</div><h2>Memuat…</h2></div>';
+ const ck='pm_lesson_'+id;
+ try{const j=await getJSON(SYNC+'?action=lesson&id='+encodeURIComponent(id));
+  if(!j.ok){if(j.error==='not_found')return errCard('Pelajaran tidak ditemukan atau belum diterbitkan.',()=>loadLesson(id));throw 0}
+  L=j.lesson;try{localStorage.setItem(ck,JSON.stringify(L))}catch(e){}
+ }catch(e){try{L=JSON.parse(localStorage.getItem(ck))}catch(x){}
+  if(!L)return errCard('Tidak bisa terhubung. Periksa internet.',()=>loadLesson(id))}
+ begin()}
+function begin(){MAX=L.missions.reduce((t,m)=>t+maxOf(m),0);document.getElementById('ttl').textContent='🖱️ '+(L.title||'Petualangan Belajar');document.title=L.title||'Petualangan Belajar';start()}
+
+/* ---- awal ---- */
+function start(){
+ done={};ms={};me=null;et=null;recalc();setLang(false);
+ const cls=L.classes||[];
+ A.innerHTML=`<div class="card"><div class="big">👋</div><h1>${bi('Hello! What is your name?','Halo! Siapa namamu?')}</h1><div class="f"><label>${bi('Name','Nama')}<input id="nm" maxlength="30" autocomplete="off"></label>${cls.length?`<label>${bi('Class','Kelas')}<select id="kl"><option value="">Choose / Pilih</option>${cls.map(k=>`<option>${esc(k)}</option>`).join('')}</select></label>`:''}</div><p id="msg" class="msg"></p><button class="go" id="go">${bi("Let's play!",'Mulai bermain')}</button></div>`;
+ const go=()=>{const nm=A.querySelector('#nm').value.trim(),k=A.querySelector('#kl'),kl=k?k.value:'';
+  if(!nm){msg('Please write your name.','Tulis namamu dulu ya.');return}
+  if(k&&!kl){msg('Please choose your class.','Pilih kelasmu dulu ya.');return}
+  me={id:'S'+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36),nama:nm,kelas:kl};save();home()};
+ A.querySelector('#go').onclick=go;
+ A.querySelector('#nm').onkeydown=e=>{if(e.key==='Enter')go()}}
+function gantiSiswa(){if(!stars||confirm('Ganti siswa? Skor ini sudah tersimpan.'))start()}
+
+/* ---- menu ---- */
+function home(){
+ if(!me)return start();
+ save();
+ A.innerHTML=`<h1>${bi('Hello, '+esc(me.nama)+'!','Halo, '+esc(me.nama)+'!')}</h1><p class="sub">${bi('Choose a mission. Start from Mission 1.','Pilih satu misi. Kerjakan dari Misi 1.')}</p><div class="menu"></div>${exSteps().length?`<button class="mb wide" id="xt"><span>📝</span><b>Exit Ticket &amp; Reflection</b>${et?'<em>✅</em>':''}</button>`:''}<p style="text-align:center;margin-top:18px"><button class="back" onclick="gantiSiswa()">Ganti siswa</button></p>`;
+ const m=A.querySelector('.menu');
+ L.missions.forEach((x,i)=>{const b=$(`<button class="mb"><span>${esc(x.icon||'⭐')}</span><b>Mission ${i+1}</b><small>${esc(tx(x.title))}</small>${done[i]?'<em>✅</em>':''}</button>`);b.onclick=()=>run(i);m.append(b)});
+ const xt=A.querySelector('#xt');if(xt)xt.onclick=exitTicket;
+ if(L.missions.length&&Object.keys(done).length>=L.missions.length)m.before($(`<div class="card" style="margin-bottom:14px"><div class="big">🏆</div><h2>${bi('You finished everything! ⭐ '+stars+'/'+MAX,'Semua misi selesai!')}</h2></div>`));
+}
+function run(i){cur=i;ms[i]={s:0,x:0};recalc();const m=L.missions[i];
+ ({guess:tGuess,targets:tTargets,mouse_buttons:tMouse,quiz:tQuiz}[m.type]||((a,b)=>finish(a,b)))(i,m)}
+function finish(i,m){done[i]=1;add(sc(m).b);ok();save();
+ const all=Object.keys(done).length>=L.missions.length;
+ A.innerHTML=`<div class="card"><div class="big">${all?'🏆':'🎉'}</div><h2>${all?bi('All missions done, '+esc(me.nama)+'!','Semua misi selesai, '+esc(me.nama)+'!'):bi('Great job!','Hebat!')}</h2><p>${m.done&&tx(m.done)?T(m.done):''}</p>${all?`<p><b>${bi('Final score: ⭐ '+stars+' / '+MAX,'Skor akhir')}</b></p>`:''}<button class="go" onclick="home()">${bi('Back to menu','Kembali ke menu')}</button></div>`}
+
+/* ---- gambar mouse ---- */
+function mouse(hl,cls){const f=s=>hl===s?'#fde047':'#f1f5f9';
+return `<svg viewBox="0 0 100 100" class="${cls||''}"><rect x="28" y="6" width="44" height="88" rx="22" fill="#f1f5f9" stroke="#475569" stroke-width="3"/><path data-s="L" d="M29.5 40V28A20.5 20.5 0 0 1 50 7.5V40Z" fill="${f('L')}" stroke="#475569" stroke-width="2.5"/><path data-s="R" d="M50 7.5A20.5 20.5 0 0 1 70.5 28V40H50Z" fill="${f('R')}" stroke="#475569" stroke-width="2.5"/><rect x="47" y="16" width="6" height="14" rx="3" fill="#475569"/></svg>`}
+
+/* ---- template: Kenali & Tebak ---- */
+function tGuess(i,m){
+ const it=(m.items||[]).filter(x=>x.name);
+ const go=()=>{const ks=shuffle(it.slice());let r=0;
+  const ask=()=>{
+   if(r>=ks.length)return finish(i,m);
+   const k=ks[r],lock={v:0};
+   A.innerHTML=`${hdr(mt(i)+' ('+(r+1)+'/'+ks.length+')')}<h2>${bi('Which one is the <u>'+esc(k.name)+'</u>? Click the picture!','Mana yang <u>'+esc(k.name)+'</u>? Klik gambarnya!')}</h2><div class="grid"></div><p id="msg" class="msg"></p>`;
+   const g=A.querySelector('.grid');
+   shuffle(it.slice()).forEach(j=>{const c=$(`<button class="pc">${pic(j.emoji)}</button>`);
+    c.onclick=()=>{if(lock.v)return;
+     if(j===k){lock.v=1;ok();add(sc(m).c);c.classList.add('ok');const f=k.fact||{};msg('Correct! '+fmt(f.en||f.id||''),'Benar! '+(f.en&&f.id?fmt(f.id):''),1);setTimeout(()=>{r++;ask()},tx(f)?2600:1200)}
+     else{no();shake(c);msg('Not quite. Try again!','Belum tepat. Coba lagi ya!')}};
+    g.append(c)})};ask()};
+ if(m.learn===false)return go();
+ A.innerHTML=`${hdr(mt(i))}<h2>${m.intro&&tx(m.intro)?T(m.intro):bi('Meet these things','Kenali benda-benda ini')}</h2><div class="learn"></div><button class="go" id="st">${bi('Start guessing!','Mulai tebak!')}</button>`;
+ const l=A.querySelector('.learn');
+ it.forEach(p=>l.append($(`<div class="pc">${pic(p.emoji)}<b>${esc(p.name)}</b><p>${T(p.fact)}</p></div>`)));
+ A.querySelector('#st').onclick=go}
+
+/* ---- template: Klik target ---- */
+function tTargets(i,m){
+ const kinds=(m.targets||[]).filter(k=>k.emoji);
+ if(!kinds.length||!m.count)return finish(i,m);
+ const n=m.count;let c=0;
+ const CH={left:[bi('LEFT','KIRI'),'#3b82f6'],right:[bi('RIGHT','KANAN'),'#f97316'],double:[bi('2× LEFT','2× KIRI'),'#16a34a']};
+ const H={left:['That is not a left click. Press the LEFT button!','Itu bukan klik kiri. Tekan tombol KIRI!'],right:['That was a left click. Press the RIGHT button!','Itu klik kiri. Tekan tombol KANAN!'],double:['One click is not enough. Click twice, fast!','Satu klik belum cukup. Klik 2× cepat!']};
+ const HR=['That was a right click. Use the LEFT button!','Itu klik kanan. Gunakan tombol KIRI!'];
+ const mixed=new Set(kinds.map(k=>k.click)).size>1;
+ const hs=new Set(kinds.map(k=>k.click==='right'?'R':'L')),hl=hs.size===1?[...hs][0]:'';
+ A.innerHTML=`${hdr(mt(i))}<p class="intro">${m.intro?T(m.intro):''}</p><div class="hud"><span>${hl?mouse(hl):''}</span><div class="bar"><div id="pg"></div></div></div><div id="stage" class="stage"></div><p id="msg" class="msg"></p>`;
+ const st=A.querySelector('#stage');st.oncontextmenu=e=>e.preventDefault();
+ const spawn=()=>{
+  if(c>=n)return finish(i,m);
+  const k=kinds[Math.random()*kinds.length|0],ck=k.click||'left';
+  const chip=k.label&&tx(k.label)?`<i style="background:#475569">${T(k.label)}</i>`:(mixed?`<i style="background:${CH[ck][1]}">${CH[ck][0]}</i>`:'');
+  const t=$(`<div class="tg"><span class="e">${pic(k.emoji)}</span>${chip}</div>`);
+  t.style.left=(4+Math.random()*76)+'%';t.style.top=(4+Math.random()*55)+'%';
+  let used=0,tm=0;
+  const win=()=>{if(used)return;used=1;clearTimeout(tm);ok();add(sc(m).c);c++;
+   A.querySelector('#pg').style.width=(c/n*100)+'%';
+   const w=k.win;msg(w&&tx(w)?fmt(w.en||w.id):'Great!',w&&w.en&&w.id?fmt(w.id):'Hebat!',1);
+   if(k.after)t.querySelector('.e').innerHTML=pic(k.after);
+   t.classList.add('pop');setTimeout(()=>{t.remove();spawn()},500)};
+  const wrong=h=>{if(used)return;no();t.classList.remove('wig');void t.offsetWidth;t.classList.add('wig');msg(h[0],h[1])};
+  t.onclick=()=>{if(ck==='left')win();else if(ck==='double'){clearTimeout(tm);tm=setTimeout(()=>wrong(H.double),450)}else wrong(H[ck])};
+  t.oncontextmenu=e=>{e.preventDefault();e.stopPropagation();ck==='right'?win():wrong(ck==='left'?H.left:HR)};
+  t.ondblclick=()=>{if(ck==='double')win()};
+  st.append(t)};
+ spawn()}
+
+/* ---- template: Tombol mouse ---- */
+function tMouse(i,m){const sides=shuffle(['L','R']),NM={L:['LEFT','KIRI'],R:['RIGHT','KANAN']};let r=0;
+ const ask=()=>{
+  if(r>=2)return finish(i,m);
+  const s=sides[r],nm=NM[s],lock={v:0};
+  A.innerHTML=`${hdr(mt(i)+' ('+(r+1)+'/2)')}<h2>${bi('Click the <u>'+nm[0]+'</u> button on the mouse!','Klik tombol <u>'+nm[1]+'</u> pada mouse!')}</h2><p class="intro">${bi('Look at the mouse from above. The left button is on the left side.','Lihat mouse dari atas. Tombol kiri ada di sisi kiri.')}</p>${mouse('','bigmouse')}<p id="msg" class="msg"></p>`;
+  A.querySelectorAll('.bigmouse path').forEach(p=>p.onclick=()=>{if(lock.v)return;
+   if(p.dataset.s===s){lock.v=1;ok();add(sc(m).c);p.setAttribute('fill','#fde047');msg('Correct! This is the '+nm[0]+' button.','Benar! Ini tombol '+nm[1]+'.',1);setTimeout(()=>{r++;ask()},1800)}
+   else{no();shake(p.parentNode);msg('That is the other button. Try again!','Itu tombol sebelahnya. Coba lagi!')}});
+ };ask()}
+
+/* ---- template: Pilihan ganda ---- */
+function tQuiz(i,m){
+ const Q=(m.questions||[]).filter(q=>tx(q.q)&&(q.options||[]).length);let r=0;
+ const ask=()=>{
+  if(r>=Q.length)return finish(i,m);
+  const q=Q[r],lock={v:0};
+  A.innerHTML=`${hdr(mt(i)+' ('+(r+1)+'/'+Q.length+')')}<h2>${T(q.q)}</h2><div class="opts"></div><p id="msg" class="msg"></p>`;
+  const o=A.querySelector('.opts');
+  shuffle(q.options.filter(x=>tx(x.t))).forEach(op=>{const b=$(`<button>${T(op.t)}</button>`);
+   b.onclick=()=>{if(lock.v)return;
+    if(op.ok){lock.v=1;ok();add(sc(m).c);b.classList.add('ok');msg('Correct!','Benar!',1);setTimeout(()=>{r++;ask()},1200)}
+    else{no();shake(b);const h=q.hint;msg(h&&tx(h)?fmt(h.en||h.id):'Think again!',h&&h.en&&h.id?fmt(h.id):'Coba pikirkan lagi!')}};
+   o.append(b)})};ask()}
+
+/* ---- Exit Ticket ---- */
+const bl=t=>t?`<span class="blank f">${t}</span>`:'<span class="blank">&nbsp;</span>';
+const sent=(tpl,v)=>{const f=l=>esc(tpl[l]||'').replace(/\{(\w)\}/g,(_,k)=>bl(v&&v[k]?esc(v[k][l]||''):''));return bi(f('en')||f('id'),tpl.en&&tpl.id?f('id'):'')};
+const plain=(tpl,v)=>(tpl.en||tpl.id||'').replace(/\{(\w)\}/g,(_,k)=>v[k]?(v[k].en||v[k].id||''):'');
+const rep=(o,v)=>({en:(o&&o.en||'').split('{A}').join(v.en||v.id||''),id:(o&&o.id||'').split('{A}').join(v.id||v.en||'')});
+function exitTicket(){
+ const steps=exSteps(),res=[];let k=0;
+ const N=()=>'Exit Ticket ('+(k+1)+'/'+steps.length+')';
+ const intro=`<p class="intro">${bi('No stars here. This shows what you learned.','Di sini tidak ada bintang. Ini untuk menunjukkan apa yang kamu pelajari.')}</p>`;
+ const next=r=>{res[k]=r;k++;k<steps.length?run():fin()};
+ const run=()=>{const s=steps[k];({pair:xPair,multi:xMulti,choose:xChoose}[s.type]||(()=>next({s:'',html:''})))(s)};
+ function xPair(s){
+  const P=(s.pairs||[]).filter(p=>tx(p.a)&&tx(p.b));let pk=null,tries=0,hinted=0;
+  const step1=()=>{
+   A.innerHTML=`${hdr(N())}${intro}<div class="sent">${sent(s.template,{})}</div><h2>${T(s.promptA)}</h2><div class="grid"></div>`;
+   const g=A.querySelector('.grid');
+   P.forEach((p,ix)=>{const c=$(`<button class="pc">${pic(p.emoji)}<b>${esc(tx(p.a))}</b></button>`);c.onclick=()=>{pk=ix;step2()};g.append(c)})};
+  const step2=()=>{
+   let lock=0,wrong=0;const bm=[];const p=P[pk];
+   A.innerHTML=`${hdr(N())}${intro}<div class="sent" id="s">${sent(s.template,{A:p.a})}</div><div style="width:100px;margin:0 auto">${pic(p.emoji)}</div><h2>${T(rep(s.promptB,p.a))}</h2><div class="opts"></div><p id="msg" class="msg"></p>`;
+   const o=A.querySelector('.opts'),fill=()=>{A.querySelector('#s').innerHTML=sent(s.template,{A:p.a,B:p.b})};
+   const fin2=()=>next({s:plain(s.template,{A:p.a,B:p.b}),x:tries,h:hinted,html:sent(s.template,{A:p.a,B:p.b})});
+   shuffle(P.map((q,ix)=>ix)).forEach(ix=>{const b=$(`<button>${T(P[ix].b)}</button>`);bm[ix]=b;
+    b.onclick=()=>{if(lock||b.disabled)return;
+     if(ix===pk){lock=1;ok();b.classList.add('ok');fill();msg('Great!','Bagus!',1);setTimeout(fin2,1800);return}
+     tries++;wrong++;lock=1;snd(180,.2);shake(b);b.classList.add('dim');b.disabled=true;o.classList.add('lk');
+     if(wrong>=2){hinted=1;bm[pk].classList.add('ok');fill();msg('This is the answer. Let us keep going!','Ini jawabannya. Ayo lanjut!',1);setTimeout(fin2,3000)}
+     else{msg('Read again. Look at the picture.','Baca lagi. Lihat gambarnya.');setTimeout(()=>{lock=0;o.classList.remove('lk')},2000)}};
+    o.append(b)})};
+  step1()}
+ function xMulti(s){
+  const O=(s.options||[]).map((o,ix)=>({o,ix})).filter(x=>tx(x.o.t));let picks=[];
+  const pickStep=()=>{
+   A.innerHTML=`${hdr(N())}${intro}<h2>${T(s.promptPick)}</h2><div class="grid"></div><button class="go" id="dn" disabled>${bi('Done','Selesai')}</button>`;
+   const g=A.querySelector('.grid'),dn=A.querySelector('#dn');
+   O.forEach(x=>{const c=$(`<button class="pc">${pic(x.o.emoji)}${T(x.o.t)}</button>`);
+    c.onclick=()=>{const j=picks.indexOf(x);if(j<0){picks.push(x);c.classList.add('sel');snd(520)}else{picks.splice(j,1);c.classList.remove('sel')}dn.disabled=!picks.length};g.append(c)});
+   dn.onclick=shareStep};
+  const shareStep=()=>{const lock={v:0};
+   A.innerHTML=`${hdr(N())}${intro}<div class="sent" id="s">${sent(s.template,{})}</div><h2>${T(s.promptShare)}</h2><div class="grid"></div>`;
+   const g=A.querySelector('.grid');
+   picks.slice().sort((a,b)=>a.ix-b.ix).forEach(x=>{const c=$(`<button class="pc">${pic(x.o.emoji)}${T(x.o.t)}</button>`);
+    c.onclick=()=>{if(lock.v)return;lock.v=1;ok();c.classList.add('sel');A.querySelector('#s').innerHTML=sent(s.template,{X:x.o.t});
+     setTimeout(()=>next({s:plain(s.template,{X:x.o.t}),all:picks.slice().sort((a,b)=>a.ix-b.ix).map(p=>tx(p.o.t)).join(', '),x:0,h:0,html:sent(s.template,{X:x.o.t})}),1500)};
+    g.append(c)})};
+  pickStep()}
+ function xChoose(s){
+  const O=(s.options||[]).filter(o=>tx(o.t)),has=O.some(o=>o.ok);let lock=0,wrong=0,tries=0,hinted=0;const bm=[];
+  A.innerHTML=`${hdr(N())}${intro}<div class="sent" id="s">${sent(s.template,{})}</div><h2>${T(s.prompt)}</h2><div class="opts"></div><p id="msg" class="msg"></p>`;
+  const o=A.querySelector('.opts'),fill=op=>{A.querySelector('#s').innerHTML=sent(s.template,{X:op.t})};
+  const end=(op,d)=>setTimeout(()=>next({s:plain(s.template,{X:op.t}),x:tries,h:hinted,html:sent(s.template,{X:op.t})}),d);
+  shuffle(O.map((q,ix)=>ix)).forEach(ix=>{const op=O[ix],b=$(`<button>${T(op.t)}</button>`);bm[ix]=b;
+   b.onclick=()=>{if(lock||b.disabled)return;
+    if(!has||op.ok){lock=1;ok();b.classList.add('ok');fill(op);msg('Great!','Bagus!',1);end(op,1800);return}
+    tries++;wrong++;lock=1;snd(180,.2);shake(b);b.classList.add('dim');b.disabled=true;o.classList.add('lk');
+    if(wrong>=2){hinted=1;const ci=O.findIndex(q=>q.ok);bm[ci].classList.add('ok');fill(O[ci]);msg('This is the answer. Let us keep going!','Ini jawabannya. Ayo lanjut!',1);end(O[ci],3000)}
+    else{msg('Read again.','Baca lagi.');setTimeout(()=>{lock=0;o.classList.remove('lk')},2000)}};
+   o.append(b)})}
+ function fin(){
+  et={done:1,steps:res};save();
+  A.innerHTML=`<div class="card"><div class="big">📝</div><h2>${bi('My Exit Ticket','Tiket Keluarku')}</h2>${res.map(r=>`<div class="sent">${r.html}</div>`).join('')}<p>${bi('Ready to share? Read your sentences to the class!','Siap berbagi? Bacakan kalimatmu di depan kelas!')}</p><button class="go" onclick="home()">${bi('Back to menu','Kembali ke menu')}</button></div>`}
+ if(!steps.length)return home();
+ run()}
+boot();
+</script></body></html>
