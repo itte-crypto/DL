@@ -47,13 +47,20 @@ table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}
 .probs{background:#fee2e2;color:#7f1d1d;border:3px solid #b91c1c;border-radius:14px;padding:10px 16px;margin:12px 0}.probs ul{margin:4px 0 0;padding-left:20px}
 .top{display:flex;gap:12px;align-items:center;margin:6px 0;flex-wrap:wrap}
 .login{max-width:380px;margin:40px auto;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:12px 0}
+.stat{background:var(--card);border:3px solid var(--line);border-radius:14px;padding:10px 14px}.stat b{display:block;font-size:28px}.stat span{color:var(--mute);font-size:14px}
+.brs{display:grid;gap:8px;margin:8px 0}.br{display:grid;grid-template-columns:minmax(90px,200px) 1fr 72px;gap:10px;align-items:center}.br .tr{height:16px;background:var(--soft);border-radius:99px;overflow:hidden}.br .tr i{display:block;height:100%;background:var(--blue);border-radius:99px}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}.ctrl select,.ctrl input{width:auto;min-width:150px}
+.tabs2{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.tabs2 .on{background:var(--sun);color:#26204a}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+@media print{:root{--bg:#fff!important;--ink:#000!important;--card:#fff!important;--line:#000!important;--soft:#eee!important}.np,header{display:none!important}.card{box-shadow:none}}
 :focus-visible{outline:4px solid var(--blue);outline-offset:2px}
 </style></head><body>
 <header><b>🧑‍🏫 Admin Petualangan Belajar</b><span id="who"></span></header>
 <main id="app"></main>
 <script>
 /* Alamat Google Apps Script (Web app, berakhiran /exec) dan nama berkas game siswa. */
-const SYNC='https://script.google.com/macros/s/AKfycbwmf_IuuPdTOb-j0BqJKwR-a9Ipx9CKX6B8YEHziacsP2__ZsiG3OTGo4fCn-3e4wA2sg/exec';
+const SYNC='https://script.google.com/macros/s/AKfycbwNWzB69jpWwXdiYLl2rjumfeP5hRTqyjJ54HNcXRowQvw_egfnRX9TzUh3jNmwduXrng/exec';
 const PLAYER='player.html';
 
 const A=document.getElementById('app');
@@ -108,7 +115,7 @@ const newStep=t=>{
  return{type:'choose',template:T0('I think the answer is {X}.','Menurutku jawabannya {X}.'),prompt:T0('Choose one.','Pilih satu.'),options:[{emoji:'',t:T0(),ok:true},{emoji:'',t:T0(),ok:false}]}};
 const blank=()=>({v:1,id:uid(),title:'',tab:'',classes:[],published:false,scoring:{correct:1,bonus:2},missions:[],exit:{enabled:false,steps:[]}});
 function sample(){
- const L=blank();L.title='Petualangan Mouse';L.tab='Pertemuan 1';L.classes=['3 Aster','3 Gardenia','3 Gloxinia','3 Lavender'];
+ const L=blank();L.title='Petualangan Mouse';L.tab='Petualangan Mouse';L.classes=['3 Aster','3 Gardenia','3 Gloxinia','3 Lavender'];
  const g=newMission('guess');g.icon='🖥️';g.title=T0('Computer Parts','Bagian Komputer');g.items=[
   {name:'Monitor',emoji:'🖥️',fact:T0('The monitor shows pictures and words. It is like the eyes of the computer!','Monitor menampilkan gambar dan tulisan. Seperti mata komputer!')},
   {name:'CPU',emoji:'🗄️',fact:T0('The CPU is the brain of the computer. It is where the computer thinks!','CPU adalah otak komputer. Di sinilah komputer berpikir!')},
@@ -279,21 +286,76 @@ function editor(){
 
 /* ---------- layar: hasil ---------- */
 async function results(l){
- A.innerHTML='';A.append(h('div',{class:'top'},btn('⬅ Daftar',list,false,'back'),h('h1',{style:'margin:0'},'Hasil: '+l.title)),h('p',{class:'mute'},'Memuat dari Google Sheet…'));
- let rows;try{rows=(await api('results',{tab:l.tab})).rows}catch(e){A.append(h('div',{class:'probs'},'Gagal memuat: '+e.message));return}
- A.lastChild.remove();
- if(rows.length<2){A.append(h('div',{class:'card'},'Belum ada hasil untuk pelajaran ini.'));return}
- const head=rows[0],body=rows.slice(1),ki=head.indexOf('Kelas');
- const kelas=[...new Set(body.map(r=>r[ki]).filter(Boolean))].sort();
- const out=h('div',{class:'tw card'}),fs=h('select',{},h('option',{value:''},'Semua kelas'),kelas.map(k=>h('option',{value:k},k)));
- const draw=()=>{const f=fs.value,data=body.filter(r=>!f||r[ki]===f);out.innerHTML='';
-  const avgCols=head.map(c=>/Bintang|Salah|Misi Selesai/.test(c)&&!/Tiket/.test(c));
-  const avg=head.map((c,j)=>{if(!avgCols[j])return j===1?'Rata-rata':'';const v=data.map(r=>r[j]).filter(x=>x!==''&&!isNaN(x)).map(Number);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):''});
-  out.append(h('table',{},h('thead',{},h('tr',{},head.slice(1).map(c=>h('th',{},String(c))))),h('tbody',{},data.map(r=>h('tr',{},r.slice(1).map(c=>h('td',{},String(c))))),h('tr',{style:'font-weight:700'},avg.slice(1).map(c=>h('td',{},c))))));
-  return data};
- fs.onchange=draw;
- const dl=()=>{const data=draw();const q=v=>'"'+String(v).replace(/"/g,'""')+'"';const csv='\uFEFF'+[head].concat(data).map(r=>r.slice(1).map(q).join(',')).join('\r\n');const a=h('a',{href:URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),download:'hasil-'+l.tab+'.csv'});document.body.append(a);a.click();a.remove()};
- A.append(h('div',{class:'top'},h('label',{style:'margin:0'},'Kelas: '),fs,btn('⬇ Unduh CSV',dl,false,'go')),out);draw()}
+ L=JSON.parse(JSON.stringify(l));
+ const ms=L.missions,n=ms.length,mxs=ms.map(mx),tot=maxAll()||1;
+ const steps=(L.exit&&L.exit.enabled&&L.exit.steps)||[];
+ const holder=h('div');let rows=[],cur=null;
+ A.innerHTML='';
+ A.append(h('div',{class:'top np'},btn('⬅ Daftar',()=>{L=null;list()},false,'back'),h('h1',{style:'margin:0'},'Hasil: '+l.title)),holder);
+ const num=v=>(v===''||v==null||isNaN(v))?null:+v;
+ const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+ const parse=()=>rows.slice(1).filter(r=>r[0]).map(r=>{
+  const s={nama:String(r[1]||''),kelas:String(r[2]||''),m:[],wrong:0};
+  ms.forEach((_,i)=>{const st=num(r[3+2*i]),x=num(r[4+2*i]);s.m.push({s:st,x:x});s.wrong+=x||0});
+  s.done=num(r[3+2*n])||0;s.total=num(r[4+2*n])||0;
+  s.ex=steps.map((_,j)=>{const b=6+2*n+4*j;return{k:String(r[b]||''),x:num(r[b+2])||0,h:r[b+3]==='Ya'}});
+  s.waktu=String(r[r.length-1]||'');
+  return s});
+ const fetchRows=async()=>{
+  holder.innerHTML='';holder.append(h('p',{class:'mute'},'Memuat dari Google Sheet…'));
+  try{rows=(await api('results',{tab:l.tab})).rows||[]}catch(e){holder.innerHTML='';holder.append(h('div',{class:'probs'},'Gagal memuat: '+e.message));return false}
+  return true};
+ const reload=async()=>{if(await fetchRows())build()};
+ const build=()=>{
+  holder.innerHTML='';
+  if(rows.length<2){holder.append(h('div',{class:'card'},'Belum ada hasil untuk pelajaran ini.'),btn('Muat ulang',reload,false,'back'));return}
+  const all=parse();let tab='sum',fk='',q='',so='kn';
+  const kelas=[...new Set(all.map(s=>s.kelas).filter(Boolean))].sort();
+  const fs=h('select',{},h('option',{value:''},'Semua kelas'),kelas.map(k=>h('option',{value:k},k)));
+  const si=h('input',{type:'text',placeholder:'Cari nama'});
+  const ss=h('select',{},[['kn','Urut: kelas dan nama'],['n','Urut: nama'],['hi','Urut: skor tertinggi'],['lo','Urut: skor terendah']].map(([v,t])=>h('option',{value:v},t)));
+  const out=h('div');
+  const cmp=(a,b)=>so==='hi'?b.total-a.total||a.nama.localeCompare(b.nama):so==='lo'?a.total-b.total||a.nama.localeCompare(b.nama):so==='n'?a.nama.localeCompare(b.nama):(a.kelas.localeCompare(b.kelas)||a.nama.localeCompare(b.nama));
+  const pct=s=>Math.round(s.total/tot*100);
+  const stat=(b,t)=>h('div',{class:'stat'},h('b',{},String(b)),h('span',{},t));
+  const tbl=(head,body)=>{cur={head,body};return h('div',{class:'tw card'},h('table',{},h('thead',{},h('tr',{},head.map(c=>h('th',{},c)))),h('tbody',{},body.map(r=>h('tr',{},r.map(c=>h('td',{},String(c))))))))};
+  const tabs=[['sum','Ringkasan'],['mis','Nilai per misi'],['att','Perlu perhatian'],['ex','Exit Ticket']];
+  const tbs=tabs.map(([k,t])=>[k,btn(t,()=>{tab=k;draw()},false,'back')]);
+  const draw=()=>{
+   tbs.forEach(([k,b])=>b.classList.toggle('on',k===tab));
+   const d=all.filter(s=>(!fk||s.kelas===fk)&&(!q||s.nama.toLowerCase().includes(q))).sort(cmp);
+   out.innerHTML='';cur=null;
+   if(!d.length){out.append(h('div',{class:'card'},'Tidak ada siswa yang cocok.'));return}
+   if(tab==='sum'){
+    const done=d.filter(s=>s.done>=n).length,ex=d.filter(s=>s.ex.some(e=>e.k)).length;
+    const mr=ms.map((m,i)=>{const v=d.filter(s=>s.m[i].s!=null).map(s=>s.m[i].s);return{t:'M'+(i+1)+' '+T1(m.title),a:avg(v),c:v.length,mx:mxs[i]}});
+    out.append(h('div',{class:'stats'},stat(d.length,'siswa'),stat(Math.round(avg(d.map(s=>s.total/tot))*100)+'%','rata-rata skor total'),stat(done+'/'+d.length,'menyelesaikan semua misi'),steps.length?stat(ex+'/'+d.length,'mengisi Exit Ticket'):null),
+     h('h2',{},'Rata-rata tiap misi'),
+     h('div',{class:'brs'},mr.map(r=>h('div',{class:'br'},h('span',{},r.t),h('div',{class:'tr'},h('i',{style:'width:'+(r.mx?Math.min(100,r.a/r.mx*100):0)+'%'})),h('span',{},r.c?r.a.toFixed(1)+'/'+r.mx:'–')))),
+     h('p',{class:'mute'},'Rata-rata dihitung dari siswa yang sudah membuka misi itu.'));
+    cur={head:['Misi','Rata-rata','Maks','Siswa membuka'],body:mr.map(r=>[r.t,r.c?r.a.toFixed(1):'',r.mx,r.c])};
+   }else if(tab==='mis'){
+    out.append(tbl(['Nama','Kelas'].concat(ms.map((m,i)=>'M'+(i+1)+' '+T1(m.title)),['Total','Terakhir']),
+     d.map(s=>[s.nama,s.kelas].concat(s.m.map((m,i)=>m.s==null?'–':m.s+'/'+mxs[i]+' (salah '+(m.x||0)+')'),[s.total+'/'+tot+' ('+pct(s)+'%)',s.waktu]))),
+     h('p',{class:'mute'},'Angka = bintang didapat / maksimum. "salah" = jumlah klik yang belum tepat. "–" = misi belum dibuka.'));
+   }else if(tab==='att'){
+    const f=d.map(s=>{const r=[];if(pct(s)<70)r.push('Skor '+pct(s)+'%');s.m.forEach((m,i)=>{if((m.x||0)>=5)r.push('Salah '+m.x+'× di Misi '+(i+1))});if(s.done<n)r.push('Baru '+s.done+'/'+n+' misi selesai');return{s,r}}).filter(x=>x.r.length);
+    if(!f.length)out.append(h('div',{class:'card'},'Tidak ada siswa yang perlu perhatian. 🎉'));
+    else out.append(tbl(['Nama','Kelas','Skor','Alasan'],f.map(x=>[x.s.nama,x.s.kelas,x.s.total+'/'+tot+' ('+pct(x.s)+'%)',x.r.join('; ')])),h('p',{class:'mute'},'Ditandai bila skor di bawah 70%, ada misi dengan 5 atau lebih klik salah, atau ada misi yang belum selesai.'));
+   }else{
+    if(!steps.length)out.append(h('div',{class:'card'},'Pelajaran ini tidak memakai exit ticket.'));
+    else out.append(tbl(['Nama','Kelas'].concat(...steps.map((_,j)=>['Tiket '+(j+1)+' Kalimat','Salah','Jawaban ditunjukkan'])),d.map(s=>[s.nama,s.kelas].concat(...s.ex.map(e=>[e.k||'–',e.k?e.x:'',e.h?'Ya':''])))));
+   }};
+  fs.onchange=()=>{fk=fs.value;draw()};si.oninput=()=>{q=si.value.trim().toLowerCase();draw()};ss.onchange=()=>{so=ss.value;draw()};
+  const qv=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const grid=()=>cur?[cur.head].concat(cur.body):[];
+  holder.append(h('div',{class:'ctrl np'},fs,si,ss,btn('Muat ulang',reload,false,'back'),btn('Cetak',()=>window.print(),false,'back')),
+   h('div',{class:'tabs2 np'},tbs.map(x=>x[1])),out,
+   h('div',{class:'acts np'},
+    btn('Salin tabel',async()=>{const t=grid().map(r=>r.map(v=>String(v).replace(/[\t\r\n]+/g,' ')).join('\t')).join('\n');try{await navigator.clipboard.writeText(t);toast('Tabel disalin. Tempel ke Google Sheets.')}catch(e){prompt('Salin teks ini:',t)}},false,'back'),
+    btn('⬇ Unduh CSV',()=>{const c='﻿'+grid().map(r=>r.map(qv).join(',')).join('\r\n');const a=h('a',{href:URL.createObjectURL(new Blob([c],{type:'text/csv;charset=utf-8'})),download:'hasil-'+l.tab+'-'+tab+'.csv'});document.body.append(a);a.click();a.remove()},false,'go')));
+  draw()};
+ reload()}
 
 /* ---------- mulai ---------- */
 (async()=>{
